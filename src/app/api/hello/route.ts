@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, env: Env): Promise<NextResponse>
     }
 
     // Fetch the value from the KV store
-    const authToken = await env.CODECLUB_NAMESPACE.get('A1234');
+    const authToken = await env.CODECLUB_NAMESPACE.get(userId);
     console.log('Auth token:', authToken);
   
     if (!authToken) {
