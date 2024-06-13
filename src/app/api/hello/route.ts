@@ -7,7 +7,7 @@ interface Env {
 // Define the runtime environment
 export const runtime = 'edge';
 
-async function User(request: NextRequest, env: Env): Promise<NextResponse> {
+export async function GET(request: NextRequest, env: Env): Promise<NextResponse> {
   try {
     console.log('Received request:', request);
 
