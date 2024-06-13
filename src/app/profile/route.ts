@@ -5,9 +5,7 @@ export interface Env {
 }
 
 // Define the runtime environment
-export const config = {
-  runtime: 'edge',
-};
+export const runtime = 'edge';
 
 export async function GET(request: NextRequest, env: Env): Promise<NextResponse> {
   try {
