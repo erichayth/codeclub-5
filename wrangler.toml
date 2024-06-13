@@ -82,6 +82,6 @@ pages_build_output_dir = ".vercel/output/static"
 # [env.production.vars]
 # API_KEY = "abc123"
 
-# [[env.production.kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "<PRODUCTION_NAMESPACE_ID>"
+[[env.production.kv_namespaces]]
+binding = "CODECLUB_NAMESPACE"
+id = "a955efa84e1c4941847c843f3ddf0ecd"
