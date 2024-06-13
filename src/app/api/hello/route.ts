@@ -1,28 +1,43 @@
-//site https://codeclub4.erichayth.com/api/hello
-
 import { NextRequest, NextResponse } from 'next/server';
+
+export interface Env {
+  CODECLUB_NAMESPACE: KVNamespace;
+}
 
 // Define the runtime environment
 export const runtime = 'edge';
 
-// Define the response mapping
-const responseArray: { [key: number]: string } = {
-  1: "You're contestant number 1",
-  2: "You're contestant number 2",
-  3: "You're contestant number 3",
-  4: "You're contestant number 4"
-};
+export async function GET(request: NextRequest, env: Env): Promise<NextResponse> {
+  try {
+    console.log('Received request:', request);
 
-// Function to generate a random number and return the corresponding message
-function getRandomMessage(): string {
-  const id = Math.floor(Math.random() * 4) + 1; // Generate a random number between 1 and 4
-  return responseArray[id]; // Return the message associated with the random number
-}
+    // Get the 'UserID' from the request headers
+    const userId = request.headers.get('UserID');
+    console.log('UserID:', userId);
 
-// API route handler function
-export async function GET(request: NextRequest): Promise<NextResponse> {
-  const responseMessage = getRandomMessage(); // Call the function to get a random message
-  return new NextResponse(responseMessage, {
-    headers: { 'content-type': 'text/plain' }
-  });
+    if (!userId) {
+      console.log('UserID header is missing');
+      return new NextResponse('UserID header is missing', { status: 400 });
+    }
+
+    // Fetch the value from the KV store
+    const authToken = await env.CODECLUB_NAMESPACE.get(userId);
+    console.log('Auth token:', authToken);
+  
+    if (!authToken) {
+      console.log('Auth token not found for UserID');
+      return new NextResponse('Auth token not found for UserID', { status: 404 });
+    }
+
+    else {
+      let newRequest = new NextRequest(request);
+      newRequest.headers.set("Auth-Token", authToken);
+      let authValue = newRequest.headers.get("Auth-Token");
+      return new NextResponse('User token for UserID added to Auth-Token header', { status: 200});
+      }
+
+  } catch (error) {
+    console.error('Error in handler:', error);
+    return new NextResponse('Internal Server Error', { status: 500 });
+  }
 }
