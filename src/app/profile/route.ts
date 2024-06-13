@@ -5,7 +5,9 @@ export interface Env {
 }
 
 // Define the runtime environment
-export const runtime = 'edge';
+export const config = {
+  runtime: 'edge',
+};
 
 export async function GET(request: NextRequest, env: Env): Promise<NextResponse> {
   try {
@@ -23,19 +25,15 @@ export async function GET(request: NextRequest, env: Env): Promise<NextResponse>
     // Fetch the value from the KV store
     const authToken = await env.CODECLUB_NAMESPACE.get(userId);
     console.log('Auth token:', authToken);
-  
+
     if (!authToken) {
       console.log('Auth token not found for UserID');
       return new NextResponse('Auth token not found for UserID', { status: 404 });
-    }
-
-    else {
-      let newRequest = new NextRequest(request);
+    } else {
+      const newRequest = new NextRequest(request);
       newRequest.headers.set("Auth-Token", authToken);
-      let authValue = newRequest.headers.get("Auth-Token");
-      return new NextResponse('User token for UserID added to Auth-Token header', { status: 200});
-      }
-
+      return new NextResponse('User token for UserID added to Auth-Token header', { status: 200 });
+    }
   } catch (error) {
     console.error('Error in handler:', error);
     return new NextResponse('Internal Server Error', { status: 500 });

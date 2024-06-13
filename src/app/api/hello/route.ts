@@ -1,22 +1,28 @@
-import type { NextRequest } from 'next/server'
-import { getRequestContext } from '@cloudflare/next-on-pages'
+//site https://codeclub4.erichayth.com/api/hello
 
-export const runtime = 'edge'
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest) {
-  let responseText = 'Hello World'
+// Define the runtime environment
+export const runtime = 'edge';
 
-  // In the edge runtime you can use Bindings that are available in your application
-  // (for more details see:
-  //    - https://developers.cloudflare.com/pages/framework-guides/deploy-a-nextjs-site/#use-bindings-in-your-nextjs-application
-  //    - https://developers.cloudflare.com/pages/functions/bindings/
-  // )
-  //
-  // KV Example:
-  // const myKv = getRequestContext().env.MY_KV_NAMESPACE
-  // await myKv.put('suffix', ' from a KV store!')
-  // const suffix = await myKv.get('suffix')
-  // responseText += suffix
+// Define the response mapping
+const responseArray: { [key: number]: string } = {
+  1: "You're contestant number 1",
+  2: "You're contestant number 2",
+  3: "You're contestant number 3",
+  4: "You're contestant number 4"
+};
 
-  return new Response(responseText)
+// Function to generate a random number and return the corresponding message
+function getRandomMessage(): string {
+  const id = Math.floor(Math.random() * 4) + 1; // Generate a random number between 1 and 4
+  return responseArray[id]; // Return the message associated with the random number
+}
+
+// API route handler function
+export async function GET(request: NextRequest): Promise<NextResponse> {
+  const responseMessage = getRandomMessage(); // Call the function to get a random message
+  return new NextResponse(responseMessage, {
+    headers: { 'content-type': 'text/plain' }
+  });
 }
